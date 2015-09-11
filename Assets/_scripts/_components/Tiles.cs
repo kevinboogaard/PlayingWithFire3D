@@ -2,21 +2,6 @@
 using System.Collections;
 
 public class Tiles : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-    public void Walltile()
-    {
-
-       transform.position = _location;
-
-    }
+    public GameObject occupied;
+    public bool isWarned;
 }

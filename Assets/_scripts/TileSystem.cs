@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
-[RequireComponent(typeof(Movement))]
+using System.Collections.Generic;
 
 public class TileSystem : MonoBehaviour {
 
-    private Tiles _tile;
+    private List<Tiles> _tiles = new List<Tiles>();
 
+    #region Tiles
     private int[,] _data = new int[,] 
     {                                     
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
         {1, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 1},
-        {1, 0, 2, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 2, 0, 1},
+        {1, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 1},
         {1, 0, 0, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 0, 0, 1},
         {1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1},
         {1, 3, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 3, 1},
@@ -44,7 +45,7 @@ public class TileSystem : MonoBehaviour {
         {1, 3, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 3, 1},
         {1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1},  
         {1, 0, 0, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 0, 0, 1},
-        {1, 0, 2, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 2, 0, 1},
+        {1, 0, 2, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 1},
         {1, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 1},
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}//37
         //x = 0
@@ -55,23 +56,31 @@ public class TileSystem : MonoBehaviour {
         //3 = destrucible 
         //4 = open(
     };
+    #endregion
 
-	void Start () {
-        _tile = GetComponent<Tiles>();
+    void Start () {
 
         for (int x = 0; x < _data.GetLength(0); x++)
         {
             for (int z = 0; z < _data.GetLength(1); z++)
             {
+                SpawnTile(new Vector3(x, 0, z));
+
                 if (_data[x,z] == 1)
                 {
-                    Spawn(new Vector3(x, 1, z));
+                    GameObject wall = Spawn(new Vector3(x, 1, z));
+                    Rigidbody rigid = wall.AddComponent<Rigidbody>();
+                    rigid.constraints = RigidbodyConstraints.FreezeAll;
+
                 }
                 else if (_data[x, z] == 2)
                 {
                     GameObject player = (GameObject)GameObject.CreatePrimitive(PrimitiveType.Capsule);
                     player.AddComponent<PlayerBehaviour>();
                     player.transform.position = new Vector3(x, 1, z);
+                    Rigidbody rigid = player.AddComponent<Rigidbody>();
+                    rigid.constraints = RigidbodyConstraints.FreezeRotation;
+                    
                 }
                 else if (_data[x, z] == 3)
                 {
@@ -81,16 +90,34 @@ public class TileSystem : MonoBehaviour {
                     }
                 }
                 
-                Spawn(new Vector3(x, 0, z));
+                
             }
         }
 	}
 	void Update () {
 	
 	}
-    void Spawn(Vector3 _location)
+
+    void SpawnTile(Vector3 _location)
+    {
+        GameObject Tile = (GameObject)Instantiate(Resources.Load("Tile"),_location,transform.rotation);
+        Tile.AddComponent<Tiles>();
+        Tile.transform.tag = "Tile";
+        _tiles.Add(Tile.GetComponent<Tiles>());
+    }
+
+    GameObject Spawn(Vector3 _location)
     {
         GameObject cube = (GameObject)GameObject.CreatePrimitive(PrimitiveType.Cube);
-        
+        cube.transform.position = _location;
+
+        for (int i = 0; i < _tiles.Count; i++)
+        {
+            if (_tiles[i].transform.position.x == _location.x && _tiles[i].transform.position.z == _location.z)
+            {
+                _tiles[i].occupied = cube;
+            }
+        }
+        return cube;
     }
 }
