@@ -46,10 +46,15 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\_scripts\Behaviours\AI.cs" />
+     <Compile Include="Assets\_scripts\Behaviours\Bomb.cs" />
      <Compile Include="Assets\_scripts\TileSystem.cs" />
+     <Compile Include="Assets\_scripts\_components\Backpack.cs" />
+     <Compile Include="Assets\_scripts\_components\Health.cs" />
      <Compile Include="Assets\_scripts\_components\Movement.cs" />
      <Compile Include="Assets\_scripts\_components\PlayerBehaviour.cs" />
      <Compile Include="Assets\_scripts\_components\Tiles.cs" />
+     <Compile Include="Assets\_scripts\_components\Upgrade.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
