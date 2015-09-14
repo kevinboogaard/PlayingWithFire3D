@@ -114,4 +114,17 @@ public class TileSystem : MonoBehaviour {
 
         return null;
     }
+
+    public static void ResetAll()
+    {
+        foreach (Tiles tile in _tiles)
+        {
+            tile.f = 0;
+            tile.g = 0;
+            tile.h = 0;
+            tile.closed = false;
+            tile.open = false;
+            tile.parent = null;
+        }
+    }
 }
