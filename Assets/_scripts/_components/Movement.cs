@@ -3,16 +3,15 @@ using System.Collections;
 
 public class Movement : MonoBehaviour {
 
-    
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public Tiles currentTile;
+
+    void Update()
+    {
+        if (currentTile.transform.position != transform.position || currentTile == null)
+        {
+            currentTile = TileSystem.GetTile(transform.position);
+        }
+    }
 
     public void MoveX(int dir ,float movementspeed)
     {
