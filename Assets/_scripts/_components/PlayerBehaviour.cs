@@ -20,19 +20,19 @@ public class PlayerBehaviour : MonoBehaviour {
 	void Update () {
         if (Input.GetKey(kCLeft))
         {
-            movementcomp.MoveX(-1, _movementspeed);
+            movementcomp.MoveX(-1);
         }
         else if (Input.GetKey(kCup))
         {
-            movementcomp.MoveZ(1, _movementspeed);
+            movementcomp.MoveZ(1);
         }
         else if (Input.GetKey(kCright))
         {
-            movementcomp.MoveX(1, _movementspeed);
+            movementcomp.MoveX(1);
         }
         else if (Input.GetKey(kCdown))
         {
-            movementcomp.MoveZ(-1, _movementspeed);
+            movementcomp.MoveZ(-1);
         }
 	}
 }

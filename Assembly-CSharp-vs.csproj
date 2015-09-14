@@ -48,6 +48,8 @@
   <ItemGroup>
      <Compile Include="Assets\_scripts\Behaviours\AI.cs" />
      <Compile Include="Assets\_scripts\Behaviours\Bomb.cs" />
+     <Compile Include="Assets\_scripts\DataClass.cs" />
+     <Compile Include="Assets\_scripts\GridSystem.cs" />
      <Compile Include="Assets\_scripts\TileSystem.cs" />
      <Compile Include="Assets\_scripts\_components\Backpack.cs" />
      <Compile Include="Assets\_scripts\_components\Health.cs" />

@@ -28,7 +28,7 @@ public class AI : MonoBehaviour
         List<Tiles> closedList = new List<Tiles>();
         List<Tiles> forbiddenList = new List<Tiles>();
 
-        Tiles currentTile;
+        //Tiles currentTile;
 
         if (forbidden.Count > 0)
         {
