@@ -6,7 +6,7 @@ public class Tiles : MonoBehaviour {
     public GameObject occupied;
     public bool isWarned;
 
-    public List<Tiles> neighbours;
+    public List<Tiles> neighbours = new List<Tiles>();
 
     private int _amountTileSearch = 1;
 
@@ -28,7 +28,10 @@ public class Tiles : MonoBehaviour {
 
                 if (transform.position != pos)
                 {
-                    neighbours.Add(TileSystem.GetTile(pos));
+                    if (TileSystem.GetTile(pos))
+                    {
+                        neighbours.Add(TileSystem.GetTile(pos));
+                    }
                 }
             }
         }
