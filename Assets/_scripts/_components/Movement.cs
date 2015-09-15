@@ -40,7 +40,7 @@ public class Movement : MonoBehaviour {
     public void MoveZ(int dir)
     {
         //transform.Translate(new Vector3(0, 0, dir) * movementspeed * Time.deltaTime);
-        if (!moving && !TileSystem.GetTile((transform.position + new Vector3(dir, 0, 0))).occupied)
+        if (!moving && !TileSystem.GetTile((transform.position + new Vector3(0, 0, dir))).occupied)
         {
             moving = true;
             endpos = transform.position + new Vector3(0,0,dir);

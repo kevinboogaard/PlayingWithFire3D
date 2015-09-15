@@ -52,6 +52,7 @@
      <Compile Include="Assets\_scripts\GridSystem.cs" />
      <Compile Include="Assets\_scripts\TileSystem.cs" />
      <Compile Include="Assets\_scripts\_components\Backpack.cs" />
+     <Compile Include="Assets\_scripts\_components\Destructible.cs" />
      <Compile Include="Assets\_scripts\_components\Health.cs" />
      <Compile Include="Assets\_scripts\_components\Movement.cs" />
      <Compile Include="Assets\_scripts\_components\PlayerBehaviour.cs" />

@@ -14,19 +14,14 @@ public class Backpack : MonoBehaviour
     /// </summary>
     private List<Upgrade> _currentUpgrades = new List<Upgrade>();
 
-    public KeyCode bombKeyCode;
-
-    void Update()
+    public void DropBomb(Tiles spawnPoint)
     {
-        if (Input.GetKeyDown(bombKeyCode))
+        if (spawnPoint != null && !spawnPoint.occupied)
         {
-            DropBomb();
+            Vector3 spawnPosition = new Vector3(spawnPoint.transform.position.x, 1, spawnPoint.transform.position.z);
+            GameObject Bom = (GameObject)Instantiate(Resources.Load("Bom"), spawnPosition, transform.rotation);
+            spawnPoint.occupied = Bom;
         }
-    }
-
-    public void DropBomb()
-    {
-
     }
 
     public Upgrade GetUpgrade(int id)
