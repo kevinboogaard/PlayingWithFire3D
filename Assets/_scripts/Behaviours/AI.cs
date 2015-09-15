@@ -29,7 +29,7 @@ public class AI : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             List<Tiles> newList = CheckPath(TileSystem.GetTile(transform.position), TileSystem.GetTile(new Vector3(transform.position.x + 5, transform.position.y, transform.position.z - 4)));
 

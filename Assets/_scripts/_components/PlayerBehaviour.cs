@@ -4,20 +4,23 @@ using System.Collections;
 public class PlayerBehaviour : MonoBehaviour {
 
     private Movement movementcomp;
+    private Backpack backpackComp;
     private int _movementspeed = 10;
-	// Use this for initialization
 
     public KeyCode kCLeft = KeyCode.A;
     public KeyCode kCright = KeyCode.D;
     public KeyCode kCdown = KeyCode.S;
     public KeyCode kCup = KeyCode.W;
+    public KeyCode Bom = KeyCode.Space;
 
-	void Start () {
+	void Start ()
+    {
         movementcomp = GetComponent<Movement>();
+        backpackComp = GetComponent<Backpack>();
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
         if (Input.GetKey(kCLeft))
         {
             movementcomp.MoveX(-1);
@@ -33,6 +36,10 @@ public class PlayerBehaviour : MonoBehaviour {
         else if (Input.GetKey(kCdown))
         {
             movementcomp.MoveZ(-1);
+        }
+        else if (Input.GetKey(Bom))
+        {
+            backpackComp.DropBomb(TileSystem.GetTile(transform.position));
         }
 	}
 }

@@ -47,7 +47,7 @@ public class TileSystem : MonoBehaviour {
                     if (currentplayer <= maxplayers)
                     {
                         GameObject player = (GameObject)GameObject.CreatePrimitive(PrimitiveType.Capsule);
-
+                        player.AddComponent<Backpack>();
                         if (currentplayer <= amountplayer)
                         {
                             player.AddComponent<PlayerBehaviour>();
@@ -70,6 +70,7 @@ public class TileSystem : MonoBehaviour {
                     {
                         GameObject obstacle = Spawn(new Vector3(x, 1, z));
                         obstacle.transform.tag = "Obstacle";
+                        obstacle.AddComponent<Destructible>();
                         obstacle.GetComponent<Renderer>().material.color = Color.green;
                         obstacle.transform.parent = parentDestructibles.transform;
                     }
