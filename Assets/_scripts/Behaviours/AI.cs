@@ -31,7 +31,7 @@ public class AI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            List<Tiles> newList = CheckPath(TileSystem.GetTile(transform.position), TileSystem.GetTile(new Vector3(transform.position.x + 5, transform.position.y, transform.position.z - 4)));
+            List<Tiles> newList = CheckPath(TileSystem.GetTile(transform.position), TileSystem.GetTile(new Vector3(transform.position.x + 5, transform.position.y, transform.position.z - 4)), knownTiles);
 
             foreach (Tiles tile in newList)
             {
@@ -40,87 +40,90 @@ public class AI : MonoBehaviour
         }
     }
 
-    private static List<Tiles> CheckPath(Tiles start, Tiles end, List<Tiles> forbidden = null)
+    private static List<Tiles> CheckPath(Tiles start, Tiles end, List<Tiles> known, List<Tiles> forbidden = null)
     {
-        TileSystem.ResetAll();
+        if (known.Contains(end))
+        { 
+            TileSystem.ResetAll();
 
-        end.transform.GetComponent<Renderer>().material.color = Color.blue;
-        end.transform.name = "END";
+            end.transform.GetComponent<Renderer>().material.color = Color.blue;
+            end.transform.name = "END";
 
-        List<Tiles> openList = new List<Tiles>();
-        List<Tiles> closedList = new List<Tiles>();
-        List<Tiles> forbiddenList = new List<Tiles>();
+            List<Tiles> openList = new List<Tiles>();
+            List<Tiles> closedList = new List<Tiles>();
+            List<Tiles> forbiddenList = new List<Tiles>();
 
-        Tiles currentTile;
-        Tiles neighbour;
+            Tiles currentTile;
+            Tiles neighbour;
 
-        float gScore;
-        bool gScoreIsBest;
+            float gScore;
+            bool gScoreIsBest;
 
-        if (forbidden != null && forbidden.Count > 0)
-        {
-            for (int i = 0; i < forbidden.Count; i++)
+            if (forbidden != null && forbidden.Count > 0)
             {
-                forbiddenList.Add(forbidden[i]);
-            }
-        }
-
-        openList.Add(start);
-        while (openList.Count > 0)
-        {
-            openList.Sort(sortOnF);
-            
-            currentTile = openList[0];
-
-            if (currentTile == end)
-            {
-                return getPathToTile(currentTile);
+                for (int i = 0; i < forbidden.Count; i++)
+                {
+                    forbiddenList.Add(forbidden[i]);
+                }
             }
 
-            openList.Remove(currentTile);
-            closedList.Add(currentTile);
-            currentTile.closed = true;
-            currentTile.open = true;
-          
-            for (int i = 0; i < currentTile.neighbours.Count; i++)
-            { 
-                neighbour = currentTile.neighbours[i];
-                
-                if (neighbour.closed && !forbiddenList.Contains(neighbour) && neighbour.occupied == null && !neighbour.isWarned)
+            openList.Add(start);
+            while (openList.Count > 0)
+            {
+                openList.Sort(sortOnF);
+
+                currentTile = openList[0];
+
+                if (currentTile == end)
                 {
-                    continue;
+                    return getPathToTile(currentTile);
                 }
 
-                if (isDiagonal(currentTile, neighbour))
-                {
-                    gScore = currentTile.g + diagonalScore;
-                }
-                else
-                {
-                    gScore = currentTile.g + horizontalScore;
-                }
+                openList.Remove(currentTile);
+                closedList.Add(currentTile);
+                currentTile.closed = true;
+                currentTile.open = true;
 
-                gScoreIsBest = false;
-
-                if (!neighbour.open)
+                for (int i = 0; i < currentTile.neighbours.Count; i++)
                 {
-                    gScoreIsBest = true;
+                    neighbour = currentTile.neighbours[i];
 
-                    neighbour.h = heuristic(neighbour.transform.position, end.transform.position);
-                    openList.Add(neighbour);
-                    neighbour.open = true;
-                    neighbour.GetComponent<Renderer>().material.color = Color.cyan;
-                }
-                else if (gScore < neighbour.g)
-                {
-                    gScoreIsBest = true;
-                }
+                    if (neighbour.closed && !forbiddenList.Contains(neighbour) && known.Contains(neighbour) && neighbour.occupied == null && !neighbour.isWarned)
+                    {
+                        continue;
+                    }
 
-                if (gScoreIsBest)
-                {
-                    neighbour.parent = currentTile;
-                    neighbour.g = gScore;
-                    neighbour.f = neighbour.g + neighbour.h;
+                    if (isDiagonal(currentTile, neighbour))
+                    {
+                        gScore = currentTile.g + diagonalScore;
+                    }
+                    else
+                    {
+                        gScore = currentTile.g + horizontalScore;
+                    }
+
+                    gScoreIsBest = false;
+
+                    if (!neighbour.open)
+                    {
+                        gScoreIsBest = true;
+
+                        neighbour.h = heuristic(neighbour.transform.position, end.transform.position);
+                        openList.Add(neighbour);
+                        neighbour.open = true;
+                        neighbour.GetComponent<Renderer>().material.color = Color.cyan;
+                    }
+                    else if (gScore < neighbour.g)
+                    {
+                        gScoreIsBest = true;
+                    }
+
+                    if (gScoreIsBest)
+                    {
+                        neighbour.parent = currentTile;
+                        neighbour.g = gScore;
+                        neighbour.f = neighbour.g + neighbour.h;
+                    }
                 }
             }
         }
@@ -169,6 +172,11 @@ public class AI : MonoBehaviour
         int d1 = Mathf.Abs((int)pos1.x - (int)pos0.x);
         int d2 = Mathf.Abs((int)pos1.z - (int)pos0.z);
         return d1 + d2;
+    }
+
+    void CheckAround()
+    {
+
     }
 
     void CheckFieldOfView()

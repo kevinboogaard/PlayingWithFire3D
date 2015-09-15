@@ -23,19 +23,19 @@ public class PlayerBehaviour : MonoBehaviour {
     {
         if (Input.GetKey(kCLeft))
         {
-            movementcomp.MoveX(-1);
+            movementcomp.Rotate(-1);
         }
         else if (Input.GetKey(kCup))
         {
-            movementcomp.MoveZ(1);
+            movementcomp.Move(1);
         }
         else if (Input.GetKey(kCright))
         {
-            movementcomp.MoveX(1);
+            movementcomp.Rotate(1);
         }
         else if (Input.GetKey(kCdown))
         {
-            movementcomp.MoveZ(-1);
+            movementcomp.Move(-1);
         }
         else if (Input.GetKey(Bom))
         {
