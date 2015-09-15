@@ -20,18 +20,28 @@ public class Tiles : MonoBehaviour {
 
     void Start()
     {
-        for(int x = -_amountTileSearch; x < _amountTileSearch; x++)
+        for(int x = -_amountTileSearch; x <= _amountTileSearch; x++)
         {
-            for (int z = -_amountTileSearch; z < _amountTileSearch; z++)
-            {
-                Vector3 pos = new Vector3(transform.position.x + x, transform.position.y, transform.position.z + z);
+            Vector3 pos = new Vector3(transform.position.x + x, transform.position.y, transform.position.z);
 
-                if (transform.position != pos)
+            if (transform.position != pos)
+            {
+                if (TileSystem.GetTile(pos))
                 {
-                    if (TileSystem.GetTile(pos))
-                    {
-                        neighbours.Add(TileSystem.GetTile(pos));
-                    }
+                    neighbours.Add(TileSystem.GetTile(pos));
+                }
+            }
+        }
+
+        for (int z = -_amountTileSearch; z <= _amountTileSearch; z++)
+        {
+            Vector3 pos = new Vector3(transform.position.x, transform.position.y, transform.position.z + z);
+
+            if (transform.position != pos)
+            {
+                if (TileSystem.GetTile(pos))
+                {
+                    neighbours.Add(TileSystem.GetTile(pos));
                 }
             }
         }
