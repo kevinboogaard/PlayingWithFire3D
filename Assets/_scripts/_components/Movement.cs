@@ -18,8 +18,8 @@ public class Movement : MonoBehaviour {
         {
             currentTile = TileSystem.GetTile(transform.position);
         }
-
-        if (moving && (transform.position == endpos))
+        
+        if (transform.position == endpos)
         {
             moving = false;
         }

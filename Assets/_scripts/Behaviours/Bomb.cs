@@ -46,11 +46,11 @@ public class Bomb : MonoBehaviour
         
         for (int x =  -firePower; x <= firePower; x++)
         {
-            Tiles tile = TileSystem.GetTile(new Vector3(transform.position.x + x, transform.position.y, transform.position.z));
+            Tiles tile = TileSystem.GetTile(new Vector3(transform.position.x + x, 0, transform.position.z));
 
-            if (tile != null && tile.occupied != null)
+            if (tile != null)
             {
-                if (tile.occupied.tag == "Obstacle" || !tile.occupied)
+                if (tile.occupied == null || tile.occupied.tag == "Obstacle")
                 {
                     warnedTiles.Add(tile);
                 }
@@ -59,11 +59,11 @@ public class Bomb : MonoBehaviour
 
         for (int z = -firePower; z <= firePower; z++)
         {
-            Tiles tile = TileSystem.GetTile(new Vector3(transform.position.x , transform.position.y, transform.position.z + z));
+            Tiles tile = TileSystem.GetTile(new Vector3(transform.position.x , 0, transform.position.z + z));
 
-            if (tile != null && tile.occupied != null)
+            if (tile != null)
             {
-                if (tile.occupied.tag == "Obstacle" || !tile.occupied)
+                if (tile.occupied == null || tile.occupied.tag == "Obstacle")
                 {
                     warnedTiles.Add(tile);
                 }
