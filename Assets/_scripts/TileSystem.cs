@@ -48,9 +48,13 @@ public class TileSystem : MonoBehaviour {
                     {
                         GameObject player = (GameObject)GameObject.CreatePrimitive(PrimitiveType.Capsule);
                         player.AddComponent<Backpack>();
+                        player.AddComponent<Movement>().rotationSpeed = 100;
                         if (currentplayer <= amountplayer)
                         {
                             player.AddComponent<PlayerBehaviour>();
+                            GameObject camera = (GameObject)Instantiate(Resources.Load("Camera"), player.transform.position, player.transform.rotation);
+                            camera.transform.parent = player.transform;
+
                         }
                         else
                         {
