@@ -2,10 +2,13 @@
 using System.Collections;
 
 public class Movement : MonoBehaviour {
+    public bool moving = false;
+    public bool rotation = false;
+
+    public Vector3 tilePosition;
+
     private Vector3 endpos;
     private int endrot;
-    private bool moving = false;
-    private bool rotation = false;
     public Tiles currentTile;
 
     public float movementSpeed = 10;
@@ -18,12 +21,17 @@ public class Movement : MonoBehaviour {
 
     void Update()
     {
+        if (Mathf.Round(transform.position.x) != tilePosition.x || Mathf.Round(transform.position.z) != tilePosition.z)
+        {
+            tilePosition = new Vector3(Mathf.Round(transform.position.x), 0, Mathf.Round(transform.position.z));
+        }
+
         if (currentTile == null || currentTile.transform.position != transform.position)
         {
             currentTile = TileSystem.GetTile(transform.position);
         }
 
-        if (transform.position == new Vector3(endpos.x, transform.position.y, endpos.z))
+        if (Mathf.Round(transform.position.x) == Mathf.Round(endpos.x) && Mathf.Round(transform.position.z) == Mathf.Round(endpos.z))
         {
             moving = false;
         }
@@ -34,7 +42,7 @@ public class Movement : MonoBehaviour {
         }
 
         transform.position = Vector3.MoveTowards(transform.position, endpos, Time.deltaTime * movementSpeed);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(endrot, Vector3.up), 5 * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(endrot, Vector3.up), rotationSpeed * Time.deltaTime);
     }
 
     /// <summary>
@@ -51,7 +59,7 @@ public class Movement : MonoBehaviour {
                 if (targettedTile != null && targettedTile.occupied == null)
                 {
                     moving = true;
-                    endpos = transform.position + transform.forward;
+                    endpos = new Vector3(Mathf.Round(transform.position.x), transform.position.y, Mathf.Round(transform.position.z)) + transform.forward;
                 }
             }
             else if (dir < 0)
@@ -61,7 +69,7 @@ public class Movement : MonoBehaviour {
                 if (targettedTile != null && targettedTile.occupied == null)
                 {
                     moving = true;
-                    endpos = transform.position + -transform.forward;
+                    endpos = new Vector3(Mathf.Round(transform.position.x), transform.position.y, Mathf.Round(transform.position.z)) + -transform.forward;
                 }
             }
         }
