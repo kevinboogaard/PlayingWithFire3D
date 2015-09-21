@@ -10,7 +10,8 @@ using System.Linq;
 [RequireComponent(typeof(Movement))]
 public class AI : MonoBehaviour
 {
-    public List<Tiles> knownTiles;
+    public List<Tiles> knownTiles = new List<Tiles>();
+    public List<Tiles> walkableList = new List<Tiles>();
 
     private Movement _movementComp;
 
@@ -21,21 +22,49 @@ public class AI : MonoBehaviour
     private int startAmountAngle = -60;
     private int stepAmountAngle = 5;
 
+    private bool prototype = false;
+
     void Start()
     {
         _movementComp = gameObject.GetComponent<Movement>();
-        CheckFieldOfView();
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            List<Tiles> newList = CheckPath(TileSystem.GetTile(transform.position), TileSystem.GetTile(new Vector3(transform.position.x + 5, transform.position.y, transform.position.z - 4)), knownTiles);
+            Tiles randomTile = knownTiles[Random.Range(0, knownTiles.Count - 1)];
 
-            foreach (Tiles tile in newList)
+            walkableList = CheckPath(TileSystem.GetTile(transform.position), randomTile, knownTiles);
+
+            foreach (Tiles tile in walkableList)
             {
                 tile.transform.GetComponent<Renderer>().material.color = Color.blue;
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            if (prototype == false)
+            {
+                _movementComp.Rotate(1);
+                prototype = true;
+            }
+        }
+
+        if (prototype)
+        {
+            if (_movementComp.rotation)
+            {
+                CheckForTiles();
+                prototype = false;
+            }
+        }
+
+        if (walkableList.Count > 0)
+        {
+            if (_movementComp.tilePosition != walkableList[0].transform.position)
+            {
+
             }
         }
     }
@@ -174,11 +203,6 @@ public class AI : MonoBehaviour
         return d1 + d2;
     }
 
-    void CheckAround()
-    {
-
-    }
-
     void CheckFieldOfView()
     {
         Quaternion startingAngle = Quaternion.AngleAxis(startAmountAngle, Vector3.up);
@@ -186,16 +210,14 @@ public class AI : MonoBehaviour
 
         Quaternion angle = transform.rotation * startingAngle;
         Vector3 direction = angle * Vector3.forward;
-        Vector3 pos = transform.position;
+        Vector3 pos = new Vector3(transform.position.x, 1, transform.position.z);
 
         RaycastHit hit;
 
-        for (int i = 0; i < amountRaycasts; i++)
+        for (int h = 0; h < amountRaycasts; h++)
         {
-            if (Physics.Raycast(pos, direction, out hit, 500))
+            if (Physics.Raycast(pos, direction, out hit, 5000))
             {
-                Debug.DrawLine(transform.position, hit.point, Color.red);
-
                 Renderer rend = hit.collider.GetComponent<Renderer>();
 
                 if (rend)
@@ -204,9 +226,35 @@ public class AI : MonoBehaviour
                     {
                         rend.material.color = Color.red;
                     }
-                    else if (hit.transform.tag == "Tile")
+                }
+
+                direction = stepAngle * direction;
+            }
+        }
+    }
+
+    void CheckForTiles()
+    {
+        Quaternion startingAngle = Quaternion.AngleAxis(startAmountAngle, Vector3.up);
+        Quaternion stepAngle = Quaternion.AngleAxis(stepAmountAngle, Vector3.up);
+
+        Quaternion angle = transform.rotation * startingAngle;
+        Vector3 direction = angle * Vector3.forward;
+        Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z);
+
+        for (int h = 0; h < amountRaycasts; h++)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(pos, direction, 500);
+
+            for (int i = 0; i < hits.Length; i++)
+            { 
+                Renderer rend = hits[i].collider.GetComponent<Renderer>();
+
+                if (rend)
+                {
+                    if (hits[i].transform.tag == "Tile")
                     {
-                        Tiles cTile = hit.transform.GetComponent<Tiles>();
+                        Tiles cTile = hits[i].transform.GetComponent<Tiles>();
 
                         if (!knownTiles.Contains(cTile))
                         {
@@ -214,9 +262,9 @@ public class AI : MonoBehaviour
                         }
                     }
                 }
-            }
 
-            direction = stepAngle * direction;
+                direction = stepAngle * direction;
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ public class PlayerBehaviour : MonoBehaviour {
         }
         else if (Input.GetKey(Bom))
         {
-            backpackComp.DropBomb(TileSystem.GetTile(transform.position));
+            backpackComp.DropBomb(TileSystem.GetTile(new Vector3(Mathf.Round(transform.position.x), 0, Mathf.Round(transform.position.z))));
         }
 	}
 }

@@ -51,6 +51,7 @@ public class TileSystem : MonoBehaviour {
                         if (currentplayer <= amountplayer)
                         {
                             player.AddComponent<PlayerBehaviour>();
+                            player.transform.tag = "Player";
                         }
                         else
                         {
@@ -105,9 +106,10 @@ public class TileSystem : MonoBehaviour {
 
     public static Tiles GetTile(Vector3 location)
     {
+
         for (int i = 0; i < _tiles.Count; i++)
         {
-            if (_tiles[i].transform.position.x == location.x && _tiles[i].transform.position.z == location.z)
+            if (_tiles[i].transform.position.x == Mathf.Round(location.x) && _tiles[i].transform.position.z == Mathf.Round(location.z))
             {
                 return _tiles[i];
             }
