@@ -14,6 +14,8 @@ public class Movement : MonoBehaviour {
     public float movementSpeed = 10;
     public float rotationSpeed = 5;
 
+    public int rotDir;
+
     void Start()
     {
         endpos = transform.position;
@@ -41,7 +43,7 @@ public class Movement : MonoBehaviour {
             rotation = false;
         }
 
-        transform.position = Vector3.MoveTowards(transform.position, endpos, Time.deltaTime * movementSpeed);
+        transform.position = Vector3.MoveTowards(transform.position, endpos, movementSpeed * Time.deltaTime);
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.AngleAxis(endrot, Vector3.up), rotationSpeed * Time.deltaTime);
     }
 

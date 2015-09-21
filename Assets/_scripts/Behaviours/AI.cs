@@ -62,9 +62,12 @@ public class AI : MonoBehaviour
 
         if (walkableList.Count > 0)
         {
-            if (_movementComp.tilePosition != walkableList[0].transform.position)
+            if (_movementComp.moving == false && _movementComp.rotation == false)
             {
+                if (_movementComp.tilePosition != walkableList[0].transform.position)
+                {
 
+                }
             }
         }
     }
