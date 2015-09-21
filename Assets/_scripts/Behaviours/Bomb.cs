@@ -72,8 +72,11 @@ public class Bomb : MonoBehaviour
 
         for (int i = 0; i < warnedTiles.Count; i++)
         {
-            warnedTiles[i].isWarned = true;
-            warnedTiles[i].transform.GetComponent<Renderer>().material.color = Color.red;
+            if (warnedTiles[i].occupied != null)
+            {
+                warnedTiles[i].isWarned = true;
+                warnedTiles[i].transform.GetComponent<Renderer>().material.color = Color.red;
+            }
         }
     }
 
@@ -81,7 +84,7 @@ public class Bomb : MonoBehaviour
     {
         for (int i = 0; i < warnedTiles.Count; i++)
         {
-            if (warnedTiles[i].occupied != null && warnedTiles[i].occupied.tag == "Obstacle")
+            if (warnedTiles[i].occupied.tag == "Obstacle")
             {
                 warnedTiles[i].occupied.GetComponent<Destructible>().Destroy();
             }

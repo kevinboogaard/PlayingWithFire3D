@@ -48,7 +48,8 @@ public class TileSystem : MonoBehaviour {
                     {
                         GameObject player = (GameObject)GameObject.CreatePrimitive(PrimitiveType.Capsule);
                         player.AddComponent<Backpack>();
-                        player.AddComponent<Movement>().rotationSpeed = 100;
+                        player.AddComponent<Movement>().rotationSpeed = 15;
+                        player.GetComponent<Movement>().movementSpeed = 5;
                         if (currentplayer <= amountplayer)
                         {
                             player.AddComponent<PlayerBehaviour>();
@@ -65,7 +66,6 @@ public class TileSystem : MonoBehaviour {
                         Rigidbody rigid = player.AddComponent<Rigidbody>();
                         rigid.constraints = RigidbodyConstraints.FreezeRotation;
                     }
-                    
                     
                 }
                 else if (GridSystem.gridNormalKevin[x, z] == 3)
