@@ -5,6 +5,7 @@ public class PlayerBehaviour : MonoBehaviour {
 
     private Movement movementcomp;
     private Backpack backpackComp;
+    private Health healthComp;
     private int _movementspeed = 10;
 
     public KeyCode kCLeft = KeyCode.A;
@@ -17,6 +18,7 @@ public class PlayerBehaviour : MonoBehaviour {
     {
         movementcomp = GetComponent<Movement>();
         backpackComp = GetComponent<Backpack>();
+        healthComp = GetComponent<Health>();
 	}
 	
 	void Update ()
@@ -39,7 +41,10 @@ public class PlayerBehaviour : MonoBehaviour {
         }
         else if (Input.GetKey(Bom))
         {
-            backpackComp.DropBomb(TileSystem.GetTile(new Vector3(Mathf.Round(transform.position.x), 0, Mathf.Round(transform.position.z))));
+            if (healthComp._isDead == false)
+            {
+                backpackComp.DropBomb(TileSystem.GetTile(new Vector3(Mathf.Round(transform.position.x), 0, Mathf.Round(transform.position.z))));
+            }
         }
 	}
 }

@@ -168,10 +168,13 @@ public class AI : MonoBehaviour
                     return getPathToTile(currentTile);
                 }
 
-                openList.Remove(currentTile);
-                closedList.Add(currentTile);
-                currentTile.closed = true;
-                currentTile.open = true;
+                if (currentTile != null)
+                {
+                    openList.Remove(currentTile);
+                    closedList.Add(currentTile);
+                    currentTile.closed = true;
+                    currentTile.open = true;
+                }
 
                 for (int i = 0; i < currentTile.neighbours.Count; i++)
                 {

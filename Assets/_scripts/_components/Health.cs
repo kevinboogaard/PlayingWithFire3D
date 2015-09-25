@@ -32,6 +32,15 @@ public class Health : MonoBehaviour
 	private void Start()
 	{
 		amountPlayers.Add (gameObject.GetComponent<Health> ());
+
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < players.Length; i++ )
+        {
+            for (int j = 0; j < players.Length; j++)
+            {
+                Physics.IgnoreCollision(players[i].GetComponent<Collider>(), players[j].GetComponent<Collider>());
+            }
+        }
 	}
 	
 	/// <summary>
@@ -65,7 +74,18 @@ public class Health : MonoBehaviour
 	{
 		_isDead = true;
 		CheckPlayers ();
+        RemoveSelf();
 	}
+
+    /// <summary>
+    /// Function called to remove the player when he died.
+    /// </summary>
+    private void RemoveSelf()
+    {
+        Renderer renderer = GetComponent<Renderer>();
+        renderer.enabled = false;
+
+    }
 
 	/// <summary>
 	/// Check if a player has won the game.

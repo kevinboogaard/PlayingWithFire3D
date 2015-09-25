@@ -8,6 +8,9 @@ public class TileSystem : MonoBehaviour {
 
     public int[,] gridMap;
 
+    [SerializeField]
+    private int map = 1;
+
     void Start ()
     {
         GameObject parent = new GameObject("Tilemap");
@@ -15,7 +18,14 @@ public class TileSystem : MonoBehaviour {
         GameObject parentWalls = new GameObject("Walls");
         GameObject parentDestructibles = new GameObject("Destructibles");
 
-        gridMap = GridSystem.gridNormalAlex;
+        if (map == 0)
+        {
+            gridMap = GridSystem.gridNormalAlex;
+        }
+        else
+        {
+            gridMap = GridSystem.gridNormalKevin;
+        }
 
         parentTiles.transform.parent = parent.transform;
         parentWalls.transform.parent = parent.transform;
@@ -28,6 +38,8 @@ public class TileSystem : MonoBehaviour {
         int currentAmountPlayers = 0;          // Current count of players.
         int amountChance = 50;
         
+        int currentPlayablePlayer = 0;
+
         for (int x = 0; x < gridMap.GetLength(0); x++)
         {
             for (int z = 0; z < gridMap.GetLength(1); z++)
@@ -44,28 +56,40 @@ public class TileSystem : MonoBehaviour {
                 }
                 else if (gridMap[x, z] == 2)
                 {
-
                     currentplayer++;
                     
                     if (currentplayer <= maxplayers)
                     {
                         GameObject player = (GameObject)GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                        Camera camera;
+                        player.AddComponent<Health>();
                         player.AddComponent<Backpack>();
+                        player.AddComponent<Movement>().rotationSpeed = 15;
+                        player.GetComponent<Movement>().movementSpeed = 5;
+                        player.transform.tag = "Player";
                         if (currentplayer <= amountplayer)
                         {
+                            currentPlayablePlayer++;
                             player.AddComponent<PlayerBehaviour>();
-                            player.transform.tag = "Player";
+                            GameObject cCamera = Instantiate(Resources.Load("Camera"), player.transform.position, player.transform.rotation) as GameObject;
+                            cCamera.transform.parent = player.transform;
+                            camera = cCamera.GetComponent<Camera>();
                         }
                         else
                         {
                             player.AddComponent<AI>();
+                            camera = null;
                         }
 
                         player.transform.position = new Vector3(x, 1, z);
                         Rigidbody rigid = player.AddComponent<Rigidbody>();
                         rigid.constraints = RigidbodyConstraints.FreezeRotation;
+ 
+                        if (camera != null)
+                        {
+                            camera.rect = new Rect(new Vector2((float) 0.5 * (currentplayer - 1),0), new Vector2(1 - (float) 0.5 * (amountplayer - 1),1));
+                        }
                     }
-                    
                     
                 }
                 else if (gridMap[x, z] == 3)
@@ -109,10 +133,9 @@ public class TileSystem : MonoBehaviour {
 
     public static Tiles GetTile(Vector3 location)
     {
-
         for (int i = 0; i < _tiles.Count; i++)
         {
-            if (_tiles[i].transform.position.x == Mathf.Round(location.x) && _tiles[i].transform.position.z == Mathf.Round(location.z))
+            if (_tiles[i].transform.position.x == location.x && _tiles[i].transform.position.z == location.z)
             {
                 return _tiles[i];
             }

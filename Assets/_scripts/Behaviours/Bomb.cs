@@ -72,8 +72,8 @@ public class Bomb : MonoBehaviour
 
         for (int i = 0; i < warnedTiles.Count; i++)
         {
-            warnedTiles[i].isWarned = true;
-            warnedTiles[i].transform.GetComponent<Renderer>().material.color = Color.red;
+                warnedTiles[i].isWarned = true;
+                warnedTiles[i].transform.GetComponent<Renderer>().material.color = Color.red;
         }
     }
 
@@ -81,11 +81,24 @@ public class Bomb : MonoBehaviour
     {
         for (int i = 0; i < warnedTiles.Count; i++)
         {
-            if (warnedTiles[i].occupied != null && warnedTiles[i].occupied.tag == "Obstacle")
+            if ( warnedTiles[i].occupied != null && warnedTiles[i].occupied.tag == "Obstacle")
             {
                 warnedTiles[i].occupied.GetComponent<Destructible>().Destroy();
             }
 
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            
+            for (int m = 0; m < players.Length; m++)
+            {
+                if (players[m].transform.position.x == warnedTiles[i].transform.position.x && players[m].transform.position.z == warnedTiles[i].transform.position.z)
+                {
+                    if (players[m].GetComponent<Health>()._isDead == false)
+                    {
+                        Health health = players[m].GetComponent<Health>();
+                        health.health = health.health - 1;
+                    }
+                }
+            }
             warnedTiles[i].transform.GetComponent<Renderer>().material.color = Color.white;
         }
 
