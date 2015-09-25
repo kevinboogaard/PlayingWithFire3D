@@ -24,7 +24,8 @@ public class TileSystem : MonoBehaviour {
         int currentplayer = 0;                 // Current count of characters.
         int currentAmountPlayers = 0;          // Current count of players.
         int amountChance = 50;
-        
+        int currentPlayablePlayer = 0;
+
         for (int x = 0; x < GridSystem.gridNormalKevin.GetLength(0); x++)
         {
             for (int z = 0; z < GridSystem.gridNormalKevin.GetLength(1); z++)
@@ -47,24 +48,34 @@ public class TileSystem : MonoBehaviour {
                     if (currentplayer <= maxplayers)
                     {
                         GameObject player = (GameObject)GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                        Camera camera;
+                        player.AddComponent<Health>();
                         player.AddComponent<Backpack>();
                         player.AddComponent<Movement>().rotationSpeed = 15;
                         player.GetComponent<Movement>().movementSpeed = 5;
+                        player.transform.tag = "Player";
                         if (currentplayer <= amountplayer)
                         {
+                            currentPlayablePlayer++;
                             player.AddComponent<PlayerBehaviour>();
-                            GameObject camera = (GameObject)Instantiate(Resources.Load("Camera"), player.transform.position, player.transform.rotation);
-                            camera.transform.parent = player.transform;
-
+                            GameObject cCamera = Instantiate(Resources.Load("Camera"), player.transform.position, player.transform.rotation) as GameObject;
+                            cCamera.transform.parent = player.transform;
+                            camera = cCamera.GetComponent<Camera>();
                         }
                         else
                         {
                             player.AddComponent<AI>();
+                            camera = null;
                         }
 
                         player.transform.position = new Vector3(x, 1, z);
                         Rigidbody rigid = player.AddComponent<Rigidbody>();
                         rigid.constraints = RigidbodyConstraints.FreezeRotation;
+ 
+                        if (camera != null)
+                        {
+                            camera.rect = new Rect(new Vector2((float) 0.5 * (currentplayer - 1),0), new Vector2(1 - (float) 0.5 * (amountplayer - 1),1));
+                        }
                     }
                     
                 }

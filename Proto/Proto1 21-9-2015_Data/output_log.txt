@@ -2,12 +2,12 @@ Mono path[0] = 'C:/Users/kevin/Desktop/Games/Bomberman/PlayingWithFire3D/Proto/P
 Mono path[1] = 'C:/Users/kevin/Desktop/Games/Bomberman/PlayingWithFire3D/Proto/Proto1 21-9-2015_Data/Mono'
 Mono config path = 'C:/Users/kevin/Desktop/Games/Bomberman/PlayingWithFire3D/Proto/Proto1 21-9-2015_Data/Mono/etc'
 PlayerConnection initialized from C:/Users/kevin/Desktop/Games/Bomberman/PlayingWithFire3D/Proto/Proto1 21-9-2015_Data (debug = 0)
-PlayerConnection initialized network socket : 0.0.0.0 55278
-Multi-casting "[IP] 25.30.210.163 [Port] 55278 [Flags] 3 [Guid] 456801849 [EditorId] 3679585392 [Version] 1048832 [Id] WindowsPlayer(Laptop_Kevin) [Debug] 1" to [225.0.0.222:54997]...
-Waiting for connection from host on [25.30.210.163:55278]...
-Timed out. Continuing without host connection.
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,defer=y,address=0.0.0.0:56849
-PlayerConnection already initialized - listening to [25.30.210.163:55278]
+PlayerConnection initialized network socket : 0.0.0.0 55205
+Multi-casting "[IP] 25.30.210.163 [Port] 55205 [Flags] 3 [Guid] 2835584745 [EditorId] 3679585392 [Version] 1048832 [Id] WindowsPlayer(Laptop_Kevin) [Debug] 1" to [225.0.0.222:54997]...
+Waiting for connection from host on [25.30.210.163:55205]...
+PlayerConnection accepted from [172.17.51.225] handle:0x74
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,defer=y,address=0.0.0.0:56745
+PlayerConnection already initialized - listening to [25.30.210.163:55205]
 Initialize engine version: 5.1.3f1 (b0a23b31c3d8)
 GfxDevice: creating device client; threaded=1
 Direct3D:
@@ -27,12 +27,13 @@ Loading C:\Users\kevin\Desktop\Games\Bomberman\PlayingWithFire3D\Proto\Proto1 21
 Platform assembly: C:\Users\kevin\Desktop\Games\Bomberman\PlayingWithFire3D\Proto\Proto1 21-9-2015_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
 Loading C:\Users\kevin\Desktop\Games\Bomberman\PlayingWithFire3D\Proto\Proto1 21-9-2015_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
 Platform assembly: C:\Users\kevin\Desktop\Games\Bomberman\PlayingWithFire3D\Proto\Proto1 21-9-2015_Data\Managed\System.Core.dll (this message is harmless)
-- Completed reload, in  0.062 seconds
+- Completed reload, in  0.401 seconds
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
 Platform assembly: C:\Users\kevin\Desktop\Games\Bomberman\PlayingWithFire3D\Proto\Proto1 21-9-2015_Data\Managed\System.dll (this message is harmless)
 Setting up 2 worker threads for Enlighten.
-  Thread -> id: 914 -> priority: 1 
-  Thread -> id: 1ef4 -> priority: 1 
+  Thread -> id: 3630 -> priority: 1 
+  Thread -> id: 45c -> priority: 1 
+Waiting for finish
