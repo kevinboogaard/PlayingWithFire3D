@@ -51,4 +51,15 @@ public class GridSystem : MonoBehaviour {
         //3 = destrucible 
         //4 = open(
     };
+
+    public static int[,] gridNormalAlex = new int[,]
+    {
+        { 1, 1, 1, 1, 1, 1, 1 },
+        { 1, 3, 3, 3, 0, 2, 1 },
+        { 1, 3, 1, 3, 1, 0, 1 },
+        { 1, 3, 3, 3, 3, 3, 1 },
+        { 1, 0, 1, 3, 1, 3, 1 },
+        { 1, 2, 0, 3, 3, 3, 1 },
+        { 1, 1, 1, 1, 1, 1, 1 }
+    };
 }

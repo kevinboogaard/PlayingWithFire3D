@@ -6,6 +6,8 @@ public class TileSystem : MonoBehaviour {
 
     public static List<Tiles> _tiles = new List<Tiles>();
 
+    public int[,] gridMap;
+
     void Start ()
     {
         GameObject parent = new GameObject("Tilemap");
@@ -13,6 +15,7 @@ public class TileSystem : MonoBehaviour {
         GameObject parentWalls = new GameObject("Walls");
         GameObject parentDestructibles = new GameObject("Destructibles");
 
+        gridMap = GridSystem.gridNormalAlex;
 
         parentTiles.transform.parent = parent.transform;
         parentWalls.transform.parent = parent.transform;
@@ -25,21 +28,21 @@ public class TileSystem : MonoBehaviour {
         int currentAmountPlayers = 0;          // Current count of players.
         int amountChance = 50;
         
-        for (int x = 0; x < GridSystem.gridNormalKevin.GetLength(0); x++)
+        for (int x = 0; x < gridMap.GetLength(0); x++)
         {
-            for (int z = 0; z < GridSystem.gridNormalKevin.GetLength(1); z++)
+            for (int z = 0; z < gridMap.GetLength(1); z++)
             {
                 GameObject tile = SpawnTile(new Vector3(x, 0, z));
                 tile.transform.parent = parentTiles.transform;
 
-                if (GridSystem.gridNormalKevin[x, z] == 1)
+                if (gridMap[x, z] == 1)
                 {
                     GameObject wall = Spawn(new Vector3(x, 1, z));
                     Rigidbody rigid = wall.AddComponent<Rigidbody>();
                     rigid.constraints = RigidbodyConstraints.FreezeAll;
                     wall.transform.parent = parentWalls.transform;
                 }
-                else if (GridSystem.gridNormalKevin[x, z] == 2)
+                else if (gridMap[x, z] == 2)
                 {
 
                     currentplayer++;
@@ -65,7 +68,7 @@ public class TileSystem : MonoBehaviour {
                     
                     
                 }
-                else if (GridSystem.gridNormalKevin[x, z] == 3)
+                else if (gridMap[x, z] == 3)
                 {
                     if (Random.Range(0, 100) < 30)
                     {

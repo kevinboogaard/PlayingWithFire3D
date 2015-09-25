@@ -14,7 +14,15 @@ public class Movement : MonoBehaviour {
     public float movementSpeed = 10;
     public float rotationSpeed = 5;
 
-    public int rotDir;
+    private enum rotations
+    {
+        north = 1,
+        east = 2,
+        south = 3,
+        west = 4
+    }
+
+    private rotations _curRotation;
 
     void Start()
     {
@@ -109,6 +117,23 @@ public class Movement : MonoBehaviour {
             }
 
             rotation = true;
+        }
+
+        if (endrot == 0 || endrot == 360)
+        {
+            _curRotation = rotations.north;
+        }
+        else if (endrot == 90)
+        {
+            _curRotation = rotations.east;
+        }
+        else if (endrot == 180)
+        {
+            _curRotation = rotations.south;
+        }
+        else if (endrot == 270)
+        {
+            _curRotation = rotations.west;
         }
     }
 }

@@ -22,53 +22,111 @@ public class AI : MonoBehaviour
     private int startAmountAngle = -60;
     private int stepAmountAngle = 5;
 
-    private bool prototype = false;
+    private int _amountTurns = 0;
+    private int _lookTurns = 4;
+
+    private bool finishedTurning = true;
+    private bool readyToFind = false;
+
+    private enum AIStates
+    {
+
+    }
 
     void Start()
     {
         _movementComp = gameObject.GetComponent<Movement>();
+
+        while (_lookTurns > 0)
+        {
+            if (finishedTurning == true)
+            {
+                _movementComp.Rotate(-1);
+                finishedTurning = false;
+            }
+            else
+            {
+                if (_movementComp.rotation)
+                {
+                    CheckForTiles();
+                    finishedTurning = true;
+                    _lookTurns--;
+
+                    if (_lookTurns <= 0)
+                    {
+                        readyToFind = true;
+                    }
+                }
+            }
+        }
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        FollowList();
+    }
+
+    void FollowList()
+    {
+        if (walkableList.Count > 0)
+        {
+            if (_movementComp.moving == false && _movementComp.rotation == false && _amountTurns == 0)
+            {
+                if (_movementComp.tilePosition != walkableList[0].transform.position)
+                {
+                    int angle = Mathf.RoundToInt(Vector3.Angle(transform.forward, new Vector3(walkableList[0].transform.position.x - _movementComp.tilePosition.x, 0, walkableList[0].transform.position.z - _movementComp.tilePosition.z)));
+                    int aTurns = 0;
+
+                    CheckForTiles();
+
+                    if (angle > 0)
+                    {
+                        aTurns = angle / 90;
+                    }
+                    else if (angle < 0)
+                    {
+                        aTurns = -angle / 90;
+                    }
+
+                    _amountTurns = aTurns;
+
+                    if (_amountTurns == 0)
+                    {
+                        _movementComp.Move(1);
+                        walkableList.Remove(walkableList[0]);
+                    }
+                }
+                else if (walkableList.Count > 0)
+                {
+                    walkableList.Remove(walkableList[0]);
+                }
+            }
+            else if (_movementComp.moving == false && _movementComp.rotation == false && _amountTurns != 0)
+            {
+                CheckForTiles();
+
+                if (_amountTurns > 0)
+                {
+                    _movementComp.Rotate(1);
+                    _amountTurns--;
+                }
+                else if (_amountTurns < 0)
+                {
+                    _movementComp.Rotate(-1);
+                    _amountTurns++;
+                }
+            }
+        }
+        else if (walkableList.Count == 0 && readyToFind == true)
         {
             Tiles randomTile = knownTiles[Random.Range(0, knownTiles.Count - 1)];
 
             walkableList = CheckPath(TileSystem.GetTile(transform.position), randomTile, knownTiles);
 
-            foreach (Tiles tile in walkableList)
-            {
-                tile.transform.GetComponent<Renderer>().material.color = Color.blue;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.L))
-        {
-            if (prototype == false)
-            {
-                _movementComp.Rotate(1);
-                prototype = true;
-            }
-        }
-
-        if (prototype)
-        {
-            if (_movementComp.rotation)
-            {
-                CheckForTiles();
-                prototype = false;
-            }
-        }
-
-        if (walkableList.Count > 0)
-        {
-            if (_movementComp.moving == false && _movementComp.rotation == false)
-            {
-                if (_movementComp.tilePosition != walkableList[0].transform.position)
-                {
-
-                }
-            }
+            //foreach (Tiles tile in walkableList)
+            //f{
+            //    tile.transform.GetComponent<Renderer>().material.color = Color.blue;
+            //}
         }
     }
 
@@ -78,8 +136,7 @@ public class AI : MonoBehaviour
         { 
             TileSystem.ResetAll();
 
-            end.transform.GetComponent<Renderer>().material.color = Color.blue;
-            end.transform.name = "END";
+            //end.transform.GetComponent<Renderer>().material.color = Color.blue;
 
             List<Tiles> openList = new List<Tiles>();
             List<Tiles> closedList = new List<Tiles>();
@@ -119,7 +176,7 @@ public class AI : MonoBehaviour
                 for (int i = 0; i < currentTile.neighbours.Count; i++)
                 {
                     neighbour = currentTile.neighbours[i];
-
+                    
                     if (neighbour.closed && !forbiddenList.Contains(neighbour) && known.Contains(neighbour) && neighbour.occupied == null && !neighbour.isWarned)
                     {
                         continue;
@@ -136,25 +193,28 @@ public class AI : MonoBehaviour
 
                     gScoreIsBest = false;
 
-                    if (!neighbour.open)
+                    if (neighbour.occupied == null)
                     {
-                        gScoreIsBest = true;
+                        if (!neighbour.open)
+                        {
+                            gScoreIsBest = true;
 
-                        neighbour.h = heuristic(neighbour.transform.position, end.transform.position);
-                        openList.Add(neighbour);
-                        neighbour.open = true;
-                        neighbour.GetComponent<Renderer>().material.color = Color.cyan;
-                    }
-                    else if (gScore < neighbour.g)
-                    {
-                        gScoreIsBest = true;
-                    }
+                            neighbour.h = heuristic(neighbour.transform.position, end.transform.position);
+                            openList.Add(neighbour);
+                            neighbour.open = true;
+                            //neighbour.GetComponent<Renderer>().material.color = Color.cyan;
+                        }
+                        else if (gScore < neighbour.g)
+                        {
+                            gScoreIsBest = true;
+                        }
 
-                    if (gScoreIsBest)
-                    {
-                        neighbour.parent = currentTile;
-                        neighbour.g = gScore;
-                        neighbour.f = neighbour.g + neighbour.h;
+                        if (gScoreIsBest)
+                        {
+                            neighbour.parent = currentTile;
+                            neighbour.g = gScore;
+                            neighbour.f = neighbour.g + neighbour.h;
+                        }
                     }
                 }
             }
@@ -206,7 +266,7 @@ public class AI : MonoBehaviour
         return d1 + d2;
     }
 
-    void CheckFieldOfView()
+    GameObject CheckForObstacle()
     {
         Quaternion startingAngle = Quaternion.AngleAxis(startAmountAngle, Vector3.up);
         Quaternion stepAngle = Quaternion.AngleAxis(stepAmountAngle, Vector3.up);
@@ -216,6 +276,7 @@ public class AI : MonoBehaviour
         Vector3 pos = new Vector3(transform.position.x, 1, transform.position.z);
 
         RaycastHit hit;
+        List<GameObject> obstacles = new List<GameObject>();
 
         for (int h = 0; h < amountRaycasts; h++)
         {
@@ -227,12 +288,21 @@ public class AI : MonoBehaviour
                 {
                     if (hit.transform.tag == "Obstacle")
                     {
-                        rend.material.color = Color.red;
+                        obstacles.Add(hit.transform.gameObject);
                     }
                 }
 
                 direction = stepAngle * direction;
             }
+        }
+
+        if (obstacles.Count > 0)
+        {
+            return obstacles[Random.Range(0, obstacles.Count)];
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -248,6 +318,7 @@ public class AI : MonoBehaviour
         for (int h = 0; h < amountRaycasts; h++)
         {
             RaycastHit[] hits = Physics.RaycastAll(pos, direction, 500);
+            bool end = false;
 
             for (int i = 0; i < hits.Length; i++)
             { 
@@ -259,7 +330,12 @@ public class AI : MonoBehaviour
                     {
                         Tiles cTile = hits[i].transform.GetComponent<Tiles>();
 
-                        if (!knownTiles.Contains(cTile))
+                        if (cTile.occupied != null && cTile.occupied.tag == "Obstacle" || cTile.occupied != null && cTile.occupied.name == "Cube")
+                        {
+                            end = true;
+                        }
+
+                        if (!knownTiles.Contains(cTile) && end == false)
                         {
                             knownTiles.Add(cTile);
                         }
