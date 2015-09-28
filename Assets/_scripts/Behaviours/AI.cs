@@ -74,22 +74,8 @@ public class AI : MonoBehaviour
             {
                 if (_movementComp.tilePosition != walkableList[0].transform.position)
                 {
-                    int angle = Mathf.RoundToInt(Vector3.Angle(transform.forward, new Vector3(walkableList[0].transform.position.x - _movementComp.tilePosition.x, 0, walkableList[0].transform.position.z - _movementComp.tilePosition.z)));
-                    int aTurns = 0;
-
-                    CheckForTiles();
-
-                    if (angle > 0)
-                    {
-                        aTurns = angle / 90;
-                    }
-                    else if (angle < 0)
-                    {
-                        aTurns = -angle / 90;
-                    }
-
-                    _amountTurns = aTurns;
-
+                    CalculateTurns();
+                    
                     if (_amountTurns == 0)
                     {
                         _movementComp.Move(1);
@@ -124,16 +110,35 @@ public class AI : MonoBehaviour
             walkableList = CheckPath(TileSystem.GetTile(transform.position), randomTile, knownTiles);
 
             //foreach (Tiles tile in walkableList)
-            //f{
+            //{
             //    tile.transform.GetComponent<Renderer>().material.color = Color.blue;
             //}
         }
     }
 
+    void CalculateTurns()
+    {
+        int angle = Mathf.RoundToInt(Vector3.Angle(transform.forward, new Vector3(walkableList[0].transform.position.x - _movementComp.tilePosition.x, 0, walkableList[0].transform.position.z - _movementComp.tilePosition.z)));
+        int aTurns = 0;
+
+        CheckForTiles();
+
+        if (angle > 0)
+        {
+            aTurns = angle / 90;
+        }
+        else if (angle < 0)
+        {
+            aTurns = -angle / 90;
+        }
+
+        _amountTurns = aTurns;
+    }
+
     private static List<Tiles> CheckPath(Tiles start, Tiles end, List<Tiles> known, List<Tiles> forbidden = null)
     {
         if (known.Contains(end))
-        { 
+        {
             TileSystem.ResetAll();
 
             //end.transform.GetComponent<Renderer>().material.color = Color.blue;
@@ -155,54 +160,53 @@ public class AI : MonoBehaviour
                     forbiddenList.Add(forbidden[i]);
                 }
             }
-
+            
             openList.Add(start);
             while (openList.Count > 0)
             {
-                openList.Sort(sortOnF);
-
-                currentTile = openList[0];
-
-                if (currentTile == end)
+                if (openList[0] != null)
                 {
-                    return getPathToTile(currentTile);
-                }
+                    openList.Sort(sortOnF);
 
-                if (currentTile != null)
-                {
+                    currentTile = openList[0];
+
+                    if (currentTile == end)
+                    {
+                        return getPathToTile(currentTile);
+                    }
+
                     openList.Remove(currentTile);
                     closedList.Add(currentTile);
                     currentTile.closed = true;
-                    currentTile.open = true;
-                }
-
-                for (int i = 0; i < currentTile.neighbours.Count; i++)
-                {
-                    neighbour = currentTile.neighbours[i];
+                    currentTile.open = false;
                     
-                    if (neighbour.closed && !forbiddenList.Contains(neighbour) && known.Contains(neighbour) && neighbour.occupied == null && !neighbour.isWarned)
+                    for (int i = 0; i < currentTile.neighbours.Count; i++)
                     {
-                        continue;
-                    }
+                        neighbour = currentTile.neighbours[i];
 
-                    if (isDiagonal(currentTile, neighbour))
-                    {
-                        gScore = currentTile.g + diagonalScore;
-                    }
-                    else
-                    {
-                        gScore = currentTile.g + horizontalScore;
-                    }
+                        if (neighbour.closed || forbiddenList.Contains(neighbour) || !known.Contains(neighbour) || neighbour.occupied)
+                        {
+                            continue;
+                        }
 
-                    gScoreIsBest = false;
+                        if (isDiagonal(currentTile, neighbour))
+                        {
+                            gScore = currentTile.g + diagonalScore;
+                        }
+                        else
+                        {
+                            gScore = currentTile.g + horizontalScore;
+                        }
 
-                    if (neighbour.occupied == null)
-                    {
+                        gScoreIsBest = false;
+
                         if (!neighbour.open)
                         {
                             gScoreIsBest = true;
 
                             neighbour.h = heuristic(neighbour.transform.position, end.transform.position);
+
+                            print(neighbour);
                             openList.Add(neighbour);
                             neighbour.open = true;
                             //neighbour.GetComponent<Renderer>().material.color = Color.cyan;
@@ -219,6 +223,11 @@ public class AI : MonoBehaviour
                             neighbour.f = neighbour.g + neighbour.h;
                         }
                     }
+                }
+                else
+                {
+                    Debug.LogWarning("Warning: Tile[0] is null.");
+                    openList.RemoveAt(0);
                 }
             }
         }
@@ -324,7 +333,7 @@ public class AI : MonoBehaviour
             bool end = false;
 
             for (int i = 0; i < hits.Length; i++)
-            { 
+            {
                 Renderer rend = hits[i].collider.GetComponent<Renderer>();
 
                 if (rend)

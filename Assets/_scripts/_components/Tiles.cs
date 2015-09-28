@@ -14,8 +14,8 @@ public class Tiles : MonoBehaviour {
     public float h;
     public float f;
 
-    public bool closed;
-    public bool open;
+    public bool closed = false;
+    public bool open = false;
     public Tiles parent;
 
     void Start()

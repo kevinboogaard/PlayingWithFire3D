@@ -46,7 +46,7 @@ public class Movement : MonoBehaviour {
             moving = false;
         }
 
-        if (Mathf.RoundToInt(transform.rotation.eulerAngles.y) == endrot)
+        if (Mathf.RoundToInt(transform.rotation.eulerAngles.y) == endrot || Mathf.RoundToInt(transform.rotation.eulerAngles.y) == 360 || Mathf.RoundToInt(transform.rotation.eulerAngles.y) == 0)
         {
             rotation = false;
         }
