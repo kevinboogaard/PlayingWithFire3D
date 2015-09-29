@@ -8,12 +8,21 @@ using System.Linq;
 /// The class is put on every non player character in the game.
 /// </summary>
 [RequireComponent(typeof(Movement))]
+[RequireComponent(typeof(Backpack))]
+[RequireComponent(typeof(Health))]
 public class AI : MonoBehaviour
 {
     public List<Tiles> knownTiles = new List<Tiles>();
+
     public List<Tiles> walkableList = new List<Tiles>();
+    public List<Tiles> fleeList = new List<Tiles>();
+
+    public List<Tiles> knownObstacles = new List<Tiles>();
+    public List<Tiles> forbiddenTiles = new List<Tiles>();
 
     private Movement _movementComp;
+    private Backpack _backpackComp;
+    private Health _healthComp;
 
     private static float horizontalScore = 1f;
     private static float diagonalScore = 1.414f;
@@ -28,14 +37,20 @@ public class AI : MonoBehaviour
     private bool finishedTurning = true;
     private bool readyToFind = false;
 
-    private enum AIStates
+    private enum SeekStates
     {
-
+        SAFE = 0,
+        WALKTOBOMB = 1,
+        FLEE = 2
     }
+
+    private SeekStates seekState = SeekStates.FLEE;
 
     void Start()
     {
         _movementComp = gameObject.GetComponent<Movement>();
+        _backpackComp = gameObject.GetComponent<Backpack>();
+        _healthComp = gameObject.GetComponent<Health>();
 
         while (_lookTurns > 0)
         {
@@ -63,7 +78,106 @@ public class AI : MonoBehaviour
 
     void Update()
     {
-        FollowList();
+        if (!_healthComp._isDead)
+        {
+            CheckSeekState();
+            FollowList();
+        }
+    }
+
+    void CheckSeekState()
+    {
+        if (seekState == SeekStates.SAFE)
+        {
+            if (knownObstacles.Count > 0)
+            {
+                Tiles randomDestructible = knownObstacles[Random.Range(0, knownObstacles.Count - 1)];
+                Tiles safeTile = null;
+
+                for (int i = 0; i < randomDestructible.neighbours.Count; i++)
+                {
+                    if (knownTiles.Contains(randomDestructible.neighbours[i]))
+                    {
+                        randomDestructible = randomDestructible.neighbours[i];
+                    }
+                }
+
+                if (randomDestructible != null)
+                {
+                    forbiddenTiles.Add(randomDestructible);
+
+                    foreach (Tiles tile in Bomb.GetWarnedTiles(_backpackComp.firePower, randomDestructible.transform))
+                    {
+                        forbiddenTiles.Add(tile);
+                    }
+
+                    for (int i = 0; i < knownTiles.Count; i++)
+                    {
+                        if (!forbiddenTiles.Contains(knownTiles[i]))
+                        {
+                            safeTile = knownTiles[i];
+                            continue;
+                        }
+                    }
+
+                    if (safeTile != null)
+                    {
+                        walkableList = CheckPath(_movementComp.currentTile, randomDestructible, knownTiles);
+                        fleeList = CheckPath(randomDestructible, safeTile, knownTiles);
+
+                        if (walkableList.Count > 0 && fleeList.Count > 0)
+                        {
+                            seekState = SeekStates.WALKTOBOMB;
+                        }
+                        else
+                        {
+                            RandomWalk();
+                        }
+
+                        forbiddenTiles.Clear();
+                    }
+                    else
+                    {
+                        RandomWalk();
+                    }
+                }
+                else
+                {
+                    RandomWalk();
+                }
+            }
+            else
+            {
+                RandomWalk();
+            }
+        }
+        else if (seekState == SeekStates.WALKTOBOMB)
+        {
+            FollowList();
+
+            if (walkableList.Count == 0)
+            {
+                _backpackComp.DropBomb(_movementComp.currentTile);
+                walkableList = fleeList;
+                seekState = SeekStates.FLEE;
+            }
+        }
+        else if (seekState == SeekStates.FLEE)
+        {
+            FollowList();
+
+            if (walkableList.Count == 0)
+            {
+                seekState = SeekStates.SAFE;
+            }
+        }
+    }
+
+    void RandomWalk()
+    {
+        Tiles randomTile = knownTiles[Random.Range(0, knownTiles.Count - 1)];
+        walkableList = CheckPath(TileSystem.GetTile(transform.position), randomTile, knownTiles);
+        seekState = SeekStates.FLEE;
     }
 
     void FollowList()
@@ -102,17 +216,6 @@ public class AI : MonoBehaviour
                     _amountTurns++;
                 }
             }
-        }
-        else if (walkableList.Count == 0 && readyToFind == true)
-        {
-            Tiles randomTile = knownTiles[Random.Range(0, knownTiles.Count - 1)];
-
-            walkableList = CheckPath(TileSystem.GetTile(transform.position), randomTile, knownTiles);
-
-            //foreach (Tiles tile in walkableList)
-            //{
-            //    tile.transform.GetComponent<Renderer>().material.color = Color.blue;
-            //}
         }
     }
 
@@ -343,7 +446,12 @@ public class AI : MonoBehaviour
                         Tiles cTile = hits[i].transform.GetComponent<Tiles>();
 
                         if (cTile.occupied != null && cTile.occupied.tag == "Obstacle" || cTile.occupied != null && cTile.occupied.name == "Cube")
-                        {
+                        {   
+                            if (cTile.occupied.tag == "Obstacle" && !knownObstacles.Contains(cTile))
+                            {
+                                knownObstacles.Add(cTile);
+                            }
+                     
                             end = true;
                         }
 

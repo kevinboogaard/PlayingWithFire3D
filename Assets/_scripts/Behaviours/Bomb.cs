@@ -43,10 +43,23 @@ public class Bomb : MonoBehaviour
     private void Warn()
     {
         warnedTiles.Add(TileSystem.GetTile(transform.position));
-        
-        for (int x =  -firePower; x <= firePower; x++)
+
+        GetWarnedTiles(firePower, transform, warnedTiles);
+
+        for (int i = 0; i < warnedTiles.Count; i++)
         {
-            Tiles tile = TileSystem.GetTile(new Vector3(transform.position.x + x, 0, transform.position.z));
+                warnedTiles[i].isWarned = true;
+                warnedTiles[i].transform.GetComponent<Renderer>().material.color = Color.red;
+        }
+    }
+
+    public static List<Tiles> GetWarnedTiles(int firePower, Transform centerTile, List<Tiles> warnedTiles = null)
+    {
+        if (warnedTiles == null) { warnedTiles = new List<Tiles>(); };
+
+        for (int x = -firePower; x <= firePower; x++)
+        {
+            Tiles tile = TileSystem.GetTile(new Vector3(centerTile.position.x + x, 0, centerTile.position.z));
 
             if (tile != null)
             {
@@ -59,7 +72,7 @@ public class Bomb : MonoBehaviour
 
         for (int z = -firePower; z <= firePower; z++)
         {
-            Tiles tile = TileSystem.GetTile(new Vector3(transform.position.x , 0, transform.position.z + z));
+            Tiles tile = TileSystem.GetTile(new Vector3(centerTile.position.x, 0, centerTile.position.z + z));
 
             if (tile != null)
             {
@@ -70,11 +83,7 @@ public class Bomb : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < warnedTiles.Count; i++)
-        {
-                warnedTiles[i].isWarned = true;
-                warnedTiles[i].transform.GetComponent<Renderer>().material.color = Color.red;
-        }
+        return warnedTiles;
     }
 
     public void Explode()

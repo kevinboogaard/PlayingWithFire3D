@@ -9,6 +9,8 @@ using System.Collections.Generic;
 /// </summary>
 public class Backpack : MonoBehaviour
 {
+    public int firePower = 1;
+
     /// <summary>
     /// List of every upgrade in the player.
     /// </summary>
@@ -21,6 +23,7 @@ public class Backpack : MonoBehaviour
             Vector3 spawnPosition = new Vector3(spawnPoint.transform.position.x, 1, spawnPoint.transform.position.z);
             GameObject Bom = (GameObject)Instantiate(Resources.Load("Bom"), spawnPosition, transform.rotation);
             spawnPoint.occupied = Bom;
+            Bom.GetComponent<Bomb>().firePower = firePower;
         }
     }
 
